@@ -3,7 +3,7 @@ name: Notify Discord on Push
 on:
   push:
     branches:
-      - main  # Change this to your default branch if needed
+      - main  # Change this if needed
 
 jobs:
   notify:
@@ -15,15 +15,10 @@ jobs:
       - name: Get Commit Details
         id: commit_info
         run: |
-          echo "MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          
-          echo "AUTHOR=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
-          
-          echo "FILES<<EOF" >> $GITHUB_ENV
-          echo "$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | tr '\n' ', ')" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          echo "MESSAGE=$(git log -1 --pretty=format:%s)" >> $GITHUB_ENV
+          echo "AUTHOR=$(git log -1 --pretty=format:%an)" >> $GITHUB_ENV
+          FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | tr '\n' ', ')
+          echo "FILES=${FILES:-No files changed}" >> $GITHUB_ENV
 
       - name: Send message to Discord
         uses: Ilshidur/action-discord@master
