@@ -1,0 +1,18 @@
+name: Notify Discord
+
+# Trigger the action on push events
+on:
+  push:
+    branches:
+      - main  # Trigger only on pushes to the 'main' branch (or change this to your default branch)
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send message to Discord
+        uses: Ilshidur/action-discord@master
+        with:
+          args: "New push to the repository! Check it out!"
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
