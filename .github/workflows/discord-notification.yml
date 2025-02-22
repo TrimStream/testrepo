@@ -1,18 +1,22 @@
-name: Notify Discord
+name: Notify Discord on Push
 
-# Trigger the action on push events
 on:
   push:
     branches:
-      - main  # Trigger only on pushes to the 'main' branch (or change this to your default branch)
+      - main  # Change this to your default branch if needed
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send message to Discord
+      - name: Send detailed message to Discord
         uses: Ilshidur/action-discord@master
         with:
-          args: "New push to the repository! Check it out!"
+          args: |
+            **New commit to the repository!** 🚀  
+            **Committer:** ${{ github.actor }}  
+            **Commit Message:** $(git log -1 --pretty=format:'%s')  
+            **Files Changed:** $(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})  
+            **View Commit:** [Click Here](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
